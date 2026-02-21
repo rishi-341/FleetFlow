@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import API from '../api/axios';
-import { Alert } from '../components/UI';
+import { KPICard, Alert } from '../components/UI';
 import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
     const { user } = useAuth();
+    const [kpis, setKpis] = useState(null);
     const [vehicles, setVehicles] = useState([]);
     const [trips, setTrips] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,10 +19,12 @@ const Dashboard = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const [vRes, tRes] = await Promise.all([
+            const [kpiRes, vRes, tRes] = await Promise.all([
+                API.get('/analytics/dashboard'),
                 API.get('/vehicles'),
                 API.get('/trips'),
             ]);
+            setKpis(kpiRes.data);
             setVehicles(vRes.data);
             setTrips(tRes.data);
         } catch (err) {
@@ -41,34 +44,38 @@ const Dashboard = () => {
     const recentTrips = trips.slice(0, 5);
 
     const statusClass = (s) => {
-        const m = {
-            Available: 'pill-available',
-            'On Trip': 'pill-on-trip',
-            'In Shop': 'pill-in-shop',
-            'Out of Service': 'pill-retired',
-        };
+        const m = { Available: 'pill-available', 'On Trip': 'pill-on-trip', 'In Shop': 'pill-in-shop', 'Out of Service': 'pill-retired' };
         return m[s] || 'pill-default';
     };
 
-    if (loading) return <div className="loading-spinner"><i className="fa-solid fa-spinner fa-spin"></i> Loading...</div>;
+    if (loading) return <div className="loading-spinner">Loading...</div>;
 
     return (
         <div>
             <div className="page-header">
                 <div>
                     <h1 className="page-title">Command Center</h1>
-                    <p className="page-subtitle">
-                        Welcome back, {user?.name} &middot;{' '}
-                        {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                    </p>
+                    <p className="page-subtitle">Welcome back, {user?.name} · {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
             </div>
 
             <Alert type="error" message={error} />
 
+            {/* KPI Cards */}
+            {kpis && (
+                <div className="kpi-grid">
+                    <KPICard icon="🚛" label="Active Fleet" value={kpis.activeFleet} sub={`of ${kpis.totalVehicles} vehicles`} />
+                    <KPICard icon="🔧" label="In Shop" value={kpis.maintenanceAlerts} sub="Maintenance alerts" />
+                    <KPICard icon="📈" label="Utilization Rate" value={`${kpis.utilizationRate}%`} sub="Fleet assigned" />
+                    <KPICard icon="📦" label="Pending Cargo" value={kpis.pendingCargo} sub="Awaiting dispatch" />
+                    <KPICard icon="💰" label="Total Op. Cost" value={`₹${kpis.totalOperationalCost?.toLocaleString()}`} sub="Fuel + Maintenance" />
+                    <KPICard icon="⚠️" label="Expired Licenses" value={kpis.expiredDrivers} sub="Drivers blocked" />
+                </div>
+            )}
+
             {/* Filters */}
             <div className="filter-bar">
-                <span className="filter-label"><i className="fa-solid fa-filter"></i> Filter:</span>
+                <span className="filter-label">Filter:</span>
                 <select value={filter.type} onChange={(e) => setFilter({ ...filter, type: e.target.value })}>
                     <option value="">All Types</option>
                     <option>Truck</option>
@@ -82,9 +89,7 @@ const Dashboard = () => {
                     <option>In Shop</option>
                     <option>Out of Service</option>
                 </select>
-                <button className="btn-outline" onClick={() => setFilter({ type: '', status: '', region: '' })}>
-                    <i className="fa-solid fa-xmark"></i> Clear
-                </button>
+                <button className="btn-outline" onClick={() => setFilter({ type: '', status: '', region: '' })}>Clear</button>
             </div>
 
             {/* Vehicle Grid */}
@@ -105,8 +110,8 @@ const Dashboard = () => {
                             <h3>{v.name}</h3>
                             <p className="vehicle-plate">{v.licensePlate}</p>
                             <div className="vehicle-meta">
-                                <span><i className="fa-solid fa-weight-hanging"></i> {v.maxCapacity} kg</span>
-                                <span><i className="fa-solid fa-road"></i> {v.odometer?.toLocaleString()} km</span>
+                                <span>⚖️ {v.maxCapacity} kg</span>
+                                <span>🛣️ {v.odometer?.toLocaleString()} km</span>
                             </div>
                         </div>
                     ))
@@ -138,11 +143,7 @@ const Dashboard = () => {
                                     <td><strong>{t.tripNumber}</strong></td>
                                     <td>{t.vehicle?.name || '—'}</td>
                                     <td>{t.driver?.name || '—'}</td>
-                                    <td>
-                                        <i className="fa-solid fa-location-dot"></i> {t.origin}{' '}
-                                        <i className="fa-solid fa-arrow-right" style={{ margin: '0 4px', fontSize: '0.7rem' }}></i>{' '}
-                                        {t.destination}
-                                    </td>
+                                    <td>{t.origin} → {t.destination}</td>
                                     <td>{t.cargoWeight} kg</td>
                                     <td><span className={`status-pill ${statusClass(t.status)}`}>{t.status}</span></td>
                                 </tr>

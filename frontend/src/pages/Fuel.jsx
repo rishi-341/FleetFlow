@@ -118,21 +118,21 @@ const Fuel = () => {
 
             <div className="kpi-grid kpi-grid-sm">
                 <div className="kpi-card">
-                    <div className="kpi-icon"><i className="fa-solid fa-gas-pump"></i></div>
+                    <div className="kpi-icon">⛽</div>
                     <div className="kpi-body">
                         <div className="kpi-value">₹{Math.round(totalCost).toLocaleString()}</div>
                         <div className="kpi-label">Total Fuel Cost</div>
                     </div>
                 </div>
                 <div className="kpi-card">
-                    <div className="kpi-icon"><i className="fa-solid fa-bucket"></i></div>
+                    <div className="kpi-icon">🪣</div>
                     <div className="kpi-body">
                         <div className="kpi-value">{totalLiters.toFixed(1)} L</div>
                         <div className="kpi-label">Total Liters</div>
                     </div>
                 </div>
                 <div className="kpi-card">
-                    <div className="kpi-icon"><i className="fa-solid fa-file-lines"></i></div>
+                    <div className="kpi-icon">📋</div>
                     <div className="kpi-body">
                         <div className="kpi-value">{logs.length}</div>
                         <div className="kpi-label">Total Records</div>
@@ -152,9 +152,7 @@ const Fuel = () => {
                             <td>{new Date(l.date).toLocaleDateString()}</td>
                             <td>{l.station || '—'}</td>
                             <td>
-                                <button className="btn-icon btn-danger" onClick={() => handleDelete(l._id)} title="Delete">
-                                    <i className="fa-solid fa-trash"></i>
-                                </button>
+                                <button className="btn-icon btn-danger" onClick={() => handleDelete(l._id)}>🗑️</button>
                             </td>
                         </tr>
                     ))}

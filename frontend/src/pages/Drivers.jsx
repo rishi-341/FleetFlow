@@ -161,12 +161,8 @@ const Drivers = () => {
                                             <option>Off Duty</option>
                                             <option>Suspended</option>
                                         </select>
-                                        <button className="btn-icon" onClick={() => { setEditing(d); setShowModal(true); }} title="Edit">
-                                            <i className="fa-solid fa-pen"></i>
-                                        </button>
-                                        <button className="btn-icon btn-danger" onClick={() => handleDelete(d._id)} title="Delete">
-                                            <i className="fa-solid fa-trash"></i>
-                                        </button>
+                                        <button className="btn-icon" onClick={() => { setEditing(d); setShowModal(true); }}>✏️</button>
+                                        <button className="btn-icon btn-danger" onClick={() => handleDelete(d._id)}>🗑️</button>
                                     </div>
                                 </td>
                             </tr>

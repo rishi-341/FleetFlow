@@ -136,15 +136,11 @@ const Vehicles = () => {
                             <td><StatusPill status={v.status} /></td>
                             <td>
                                 <div className="action-buttons">
-                                    <button className="btn-icon" onClick={() => { setEditing(v); setShowModal(true); }} title="Edit">
-                                        <i className="fa-solid fa-pen"></i>
+                                    <button className="btn-icon" onClick={() => { setEditing(v); setShowModal(true); }}>✏️</button>
+                                    <button className="btn-icon" onClick={() => handleToggleService(v._id)}>
+                                        {v.status === 'Out of Service' ? '♻️' : '🚫'}
                                     </button>
-                                    <button className="btn-icon" onClick={() => handleToggleService(v._id)} title={v.status === 'Out of Service' ? 'Restore' : 'Retire'}>
-                                        <i className={`fa-solid ${v.status === 'Out of Service' ? 'fa-rotate-left' : 'fa-ban'}`}></i>
-                                    </button>
-                                    <button className="btn-icon btn-danger" onClick={() => handleDelete(v._id)} title="Delete">
-                                        <i className="fa-solid fa-trash"></i>
-                                    </button>
+                                    <button className="btn-icon btn-danger" onClick={() => handleDelete(v._id)}>🗑️</button>
                                 </div>
                             </td>
                         </tr>

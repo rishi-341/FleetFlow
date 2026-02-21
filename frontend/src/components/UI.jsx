@@ -28,12 +28,9 @@ export const PageHeader = ({ title, subtitle, children }) => (
     </div>
 );
 
-// icon = FA class string e.g. "fa-solid fa-truck"
 export const KPICard = ({ label, value, sub, icon }) => (
     <div className="kpi-card">
-        <div className="kpi-icon">
-            <i className={icon}></i>
-        </div>
+        <div className="kpi-icon">{icon}</div>
         <div className="kpi-body">
             <div className="kpi-value">{value}</div>
             <div className="kpi-label">{label}</div>
@@ -64,9 +61,7 @@ export const Modal = ({ title, onClose, children }) => (
         <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
                 <h2>{title}</h2>
-                <button className="modal-close" onClick={onClose}>
-                    <i className="fa-solid fa-xmark"></i>
-                </button>
+                <button className="modal-close" onClick={onClose}>✕</button>
             </div>
             <div className="modal-body">{children}</div>
         </div>
